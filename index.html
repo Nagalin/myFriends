@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CS369</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+
+  <body onload="generateForm()">
+    <div class="d-flex justify-content-center bg-light rounded mt-4" 
+    style="min-height: 350px; position: relative; left: 50%; transform: translate(-50%,0%); max-width: 510px">
+      <div class="d-flex flex-column justify-content-center" id="row-container">
+        <!-- This is where it dynamically generated rows of input -->
+      </div>
+    </div>
+
+    <div class="d-flex mt-3 justify-content-center gap-3">
+      <button class="btn btn-success" type="button" onclick="calMinAge()">
+        Calculate minimum age
+      </button>
+
+      <button class="btn btn-success" type="button" onclick="calMaxAge()">
+        Calculate maximum age
+      </button>
+
+      <button class="btn btn-success" type="button" onclick="calSumAge()">
+        Calculate summation of age
+      </button>
+
+      <button class="btn btn-success" type="button" onclick="calAvgAge()">
+        Calculate average of age
+      </button>
+
+      <button class="btn btn-warning" type="button" onclick="random()">
+        Random
+      </button>
+
+      <button class="btn btn-danger" type="button" onclick="resetForm()">
+        Reset
+      </button>
+    </div>
+
+    <div
+      class="d-flex flex-column align-items-center gap-4 mt-3"
+      id="result-container"
+    >
+      <!-- This is where it dynamically generated computed result -->
+      <h3 id="header"></h3>
+      <div id="result"></div>
+    </div>
+  </body>
+
+  <script>
+    const validateForm = () => {
+      let isValidate = true
+
+      for (let i = 0; i < num; i++) {
+        const nameInput = document.getElementById(`name${i}`)
+        const ageInput = document.getElementById(`age${i}`)
+
+        if (!nameInput.checkValidity()) {
+          nameInput.reportValidity()
+          return !isValidate
+        }
+
+        if (!ageInput.checkValidity()) {
+          ageInput.reportValidity()
+          return !isValidate
+        }
+      }
+
+      return isValidate
+    }
+
+    const generateForm = () => {
+      num = Math.floor(Math.random() * 9) + 1
+
+      for (let i = 0; i < num; i++) {
+        const divRow = document.createElement("div")
+        divRow.setAttribute("class", "d-flex align-items-center gap-4 mt-2")
+        divRow.style.maxWidth = "800px"
+        divRow.setAttribute("id", i)
+
+        const nameInput = document.createElement("input")
+        nameInput.setAttribute("type", "text")
+        nameInput.setAttribute("placeholder", "Enter friend's name")
+        nameInput.setAttribute("required", "true")
+        nameInput.id = `name${i}`
+
+        divRow.appendChild(nameInput)
+
+        const ageInput = document.createElement("input")
+        ageInput.setAttribute("type", "number")
+        ageInput.setAttribute("placeholder", "Enter age")
+        ageInput.setAttribute("required", "true")
+        ageInput.id = `age${i}`
+
+        divRow.appendChild(ageInput)
+        document.getElementById("row-container").appendChild(divRow)
+      }
+    }
+
+    const random = () => {
+      clearResult()
+      const container = document.getElementById("row-container")
+      while (container.firstChild) container.removeChild(container.firstChild)
+      generateForm()
+    }
+
+    const calSumAge = () => {
+      if (!validateForm()) return
+      clearResult()
+
+      let sum = 0
+
+      for (let i = 0; i < num; i++) {
+        sum += parseInt(document.getElementById(`age${i}`).value)
+      }
+      document.getElementById("result").innerHTML = sum
+      document.getElementById("header").textContent = "Summation of age"
+    }
+
+    const calAvgAge = () => {
+      if (!validateForm()) return
+      clearResult()
+
+      let sum = 0
+
+      for (let i = 0; i < num; i++) {
+        sum += parseInt(document.getElementById(`age${i}`).value)
+      }
+
+      document.getElementById("result").innerHTML = sum / num
+      document.getElementById("header").textContent = "Average of age"
+    }
+
+    const calMinAge = () => {
+      if (!validateForm()) return
+      clearResult()
+      let min = 9999999999
+
+      for (let i = 0; i < num; i++) {
+        const age = parseInt(document.getElementById(`age${i}`).value)
+        if (age < min) min = age
+      }
+
+      document.getElementById("header").textContent = "Minimum age"
+
+      for (let i = 0; i < num; i++) {
+        if (parseInt(document.getElementById(`age${i}`).value) === min) {
+          const friendInfo = document.createElement("div")
+
+          friendInfo.innerHTML = `friend's name: ${
+            document.getElementById(`name${i}`).value
+          } age: ${document.getElementById(`age${i}`).value}`
+
+          document.getElementById("result").appendChild(friendInfo)
+        }
+      }
+    }
+
+    const calMaxAge = () => {
+      if (!validateForm()) return
+      clearResult()
+      let max = -9999999999
+
+      for (let i = 0; i < num; i++) {
+        const age = parseInt(document.getElementById(`age${i}`).value)
+        if (age > max) max = age
+      }
+
+      document.getElementById("header").textContent = "Maximum age"
+
+      for (let i = 0; i < num; i++) {
+        if (parseInt(document.getElementById(`age${i}`).value) === max) {
+          const friendInfo = document.createElement("div")
+          
+          friendInfo.innerHTML = `friend's name: ${
+            document.getElementById(`name${i}`).value
+          } age: ${document.getElementById(`age${i}`).value}`
+
+          document.getElementById("result").appendChild(friendInfo)
+        }
+      }
+    }
+
+    const resetForm = () => {
+      clearResult()
+      document.getElementById("header").innerHTML = ""
+
+      for (let i = 0; i < num; i++) {
+        document.getElementById(`name${i}`).value = ""
+        document.getElementById(`age${i}`).value = ""
+      }
+    }
+
+    const clearResult = () => {
+      const elm = document.getElementById("result")
+      while (elm.firstChild) elm.removeChild(elm.firstChild)
+    }
+  </script>
+</html>
